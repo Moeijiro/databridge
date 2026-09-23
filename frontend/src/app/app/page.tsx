@@ -33,7 +33,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <Panel title="Records per day" description="Delivered vs failed" bodyClassName="p-5">
+        <Panel title="Records per day" description="Delivered vs failed" className="self-start" bodyClassName="p-5">
           <div className="flex h-40 items-end gap-2" role="img" aria-label="Records delivered and failed per day">
             {days.map((d) => (
               <div key={d.day} className="group relative flex h-full flex-1 flex-col justify-end" title={`${d.day}: ${d.successful} delivered, ${d.failed} failed`}>

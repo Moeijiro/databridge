@@ -20,6 +20,7 @@ os.environ.update(
     APP_URL="http://localhost:3000",
     RETRY_BASE_DELAY_SECONDS="0",
     SCHEDULER_ENABLED="false",
+    DEMO_LATENCY="0",
 )
 
 from fastapi.testclient import TestClient  # noqa: E402

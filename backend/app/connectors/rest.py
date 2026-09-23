@@ -62,11 +62,14 @@ class RestSource:
         total_ms, pages = 0, 0
         for page in range(1, config.max_pages + 1):
             batch, elapsed = await self._page(config, auth, page)
-            pages, total_ms = pages + 1, total_ms + elapsed
-            records.extend(batch)
-            if not batch or len(records) >= settings.max_records_per_run:
+            total_ms += elapsed
+            if not batch:
                 break
-        return FetchResult(records[: settings.max_records_per_run], pages, total_ms)
+            pages += 1
+            records.extend(batch)
+            if len(records) >= settings.max_records_per_run:
+                break
+        return FetchResult(records[: settings.max_records_per_run], max(pages, 1), total_ms)
 
     async def test(self, config: RestSourceConfig, auth: ResolvedAuth) -> TestResult:
         try:

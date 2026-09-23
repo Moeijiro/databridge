@@ -29,7 +29,15 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 function Auth({ credential }: { credential: Credential | null }) {
   if (!credential) return <span className="text-muted-foreground">None</span>;
   const kind = { bearer: "Bearer token", api_key: `API key · ${credential.header_name}`, basic: `Basic · ${credential.username}` }[credential.auth_type];
-  return <span className="flex items-center gap-1.5"><KeyRound className="size-3.5 text-primary" />{credential.name}<span className="font-mono text-xs text-muted-foreground">{kind} {credential.secret_hint}</span></span>;
+  return (
+    <span className="flex items-start gap-1.5">
+      <KeyRound className="mt-0.5 size-3.5 shrink-0 text-primary" />
+      <span className="min-w-0">
+        <span className="block">{credential.name}</span>
+        <span className="block font-mono text-xs text-muted-foreground">{kind} · {credential.secret_hint}</span>
+      </span>
+    </span>
+  );
 }
 
 const LEVEL = { info: Info, warning: TriangleAlert, error: CircleAlert } as const;

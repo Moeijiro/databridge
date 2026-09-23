@@ -15,6 +15,8 @@ retry logic recovers from).
 
 from __future__ import annotations
 
+import asyncio
+import os
 import random
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
@@ -26,6 +28,13 @@ from fastapi.responses import JSONResponse, Response
 router = APIRouter(prefix="/demo", tags=["demo"], include_in_schema=True)
 
 SOURCE_TOKEN = "demo-source-token"
+# Real APIs take time; so do these, so a demo run is watchable. DEMO_LATENCY=0 turns it off (tests do).
+LATENCY = float(os.environ.get("DEMO_LATENCY", "1"))
+
+
+async def _latency(low: float, high: float) -> None:
+    if LATENCY:
+        await asyncio.sleep(random.uniform(low, high) * LATENCY)
 DESTINATION_KEY = "demo-destination-key"
 
 _FIRST = ["John", "Maria", "Aiko", "Liam", "Sofia", "Noah", "Amara", "Mateo", "Elena", "Kofi", "Hana", "Lucas",
@@ -83,20 +92,22 @@ def _unauthorised(message: str) -> JSONResponse:
 
 
 @router.get("/source/customers", summary="Demo source: customers (paged)")
-def source_customers(
+async def source_customers(
     authorization: str | None = Header(default=None),
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=20, ge=1, le=100),
 ) -> Any:
     if authorization != f"Bearer {SOURCE_TOKEN}":
         return _unauthorised("Missing or invalid bearer token")
+    await _latency(0.35, 0.6)
     start = (page - 1) * per_page
     chunk = CUSTOMERS[start:start + per_page]
     return {"data": chunk, "page": page, "per_page": per_page, "total": len(CUSTOMERS), "has_more": start + per_page < len(CUSTOMERS)}
 
 
 @router.get("/source/orders", summary="Demo source: orders (no auth)")
-def source_orders() -> Any:
+async def source_orders() -> Any:
+    await _latency(0.4, 0.7)
     return {"results": {"items": ORDERS, "count": len(ORDERS)}}
 
 
@@ -112,6 +123,7 @@ def _flaky(key: str) -> bool:
 async def destination_customers(request: Request, x_api_key: str | None = Header(default=None)) -> Any:
     if x_api_key != DESTINATION_KEY:
         return _unauthorised("Invalid API key")
+    await _latency(0.08, 0.2)
     body = await request.json()
     if not isinstance(body, dict):
         return JSONResponse({"error": "Expected a JSON object"}, status_code=400)
@@ -128,6 +140,7 @@ async def destination_customers(request: Request, x_api_key: str | None = Header
 
 @router.post("/destination/orders", summary="Demo destination: create an order")
 async def destination_orders(request: Request) -> Any:
+    await _latency(0.08, 0.2)
     body = await request.json()
     problems = []
     if not body.get("order_id"):
