@@ -56,7 +56,7 @@ function TestBadge({ result }: { result: TestResult | null }) {
         {result.status ? <span className="font-mono text-xs">HTTP {result.status}</span> : null}
         {result.elapsed_ms != null ? <span className="font-mono text-xs text-muted-foreground">{result.elapsed_ms} ms</span> : null}
       </p>
-      <p className="mt-0.5 text-muted-foreground">{result.message}</p>
+      {result.message !== "Connected" ? <p className="mt-0.5 text-muted-foreground">{result.message}</p> : null}
       {result.details.fields?.length ? (
         <p className="mt-1.5 font-mono text-[11.5px] text-muted-foreground">fields: {result.details.fields.join(", ")}</p>
       ) : null}

@@ -111,7 +111,11 @@ export function MappingEditor({
             <p className="mb-1.5 text-xs text-muted-foreground">Fields in the sample — click to map one</p>
             <div className="flex flex-wrap gap-1.5">
               {fields.filter((f) => !rules.some((r) => r.source === f)).slice(0, 24).map((f) => (
-                <button key={f} type="button" onClick={() => onChange([...rules, { ...EMPTY_RULE, source: f, target: f.split(".").pop() ?? f }])}
+                <button key={f} type="button" onClick={() => {
+                  const rule = { ...EMPTY_RULE, source: f, target: f.split(".").pop() ?? f };
+                  const blank = rules.findIndex((r) => !r.source && !r.target);
+                  onChange(blank >= 0 ? rules.map((r, i) => (i === blank ? rule : r)) : [...rules, rule]);
+                }}
                   className="rounded-md border bg-card px-2 py-0.5 font-mono text-[11.5px] text-muted-foreground hover:border-primary hover:text-primary">
                   + {f}
                 </button>
