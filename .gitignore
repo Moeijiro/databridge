@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Environment / secrets
+.env
+.env.local
+.env*.local
+*.pem
+
+# Database and uploaded files
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
