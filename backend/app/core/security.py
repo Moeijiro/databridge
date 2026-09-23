@@ -108,3 +108,8 @@ def mask(secret: str | None) -> str | None:
 
 def generate_webhook_token() -> str:
     return secrets.token_urlsafe(24)
+
+
+def hash_token(raw: str) -> str:
+    """Webhook tokens are looked up by digest, so the index never holds the token itself."""
+    return hashlib.sha256(raw.encode()).hexdigest()
