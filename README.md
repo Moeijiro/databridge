@@ -353,6 +353,16 @@ See [.env.example](.env.example). The ones that matter:
 - There is no incremental sync (updated-since) and no de-duplication. Each run sends
   everything the source returns.
 
+## Deployment
+
+There is no hosted instance; the project is set up to deploy as separate processes:
+
+- **API:** `uvicorn app.main:app --host 0.0.0.0 --port 8000` with `ENVIRONMENT=production`. The app refuses to start in production if `SECRET_KEY` is weak, `CREDENTIALS_KEY` is missing or `COOKIE_SECURE` is false.
+- **Web:** `cd frontend && npm ci && npm run build && npm start`, with `NEXT_PUBLIC_API_URL` pointing at the API.
+- **One API instance:** the scheduler runs inside the API process, so run a single instance (or `SCHEDULER_ENABLED=false` on all but one).
+- **Database:** `DATABASE_URL` takes any SQLAlchemy URL. The project is developed and tested on SQLite.
+- **Cookies:** serve the web app and the API from the same site (for example `app.example.com` and `api.example.com`) so the SameSite session cookie is sent, and set `COOKIE_SECURE=true` behind HTTPS.
+
 ## License
 
 MIT © Moeijiro
