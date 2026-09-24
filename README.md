@@ -1,5 +1,7 @@
 # DataBridge
 
+**Portfolio case study:** [moeijiro.github.io/portfolio/projects/databridge](https://moeijiro.github.io/portfolio/projects/databridge/) · **Live demo:** not hosted — the app runs locally in a few commands (see below).
+
 **Connect one API to another, and see every record move.** DataBridge pulls records
 from a REST API or an incoming webhook. It maps and converts their fields, then
 delivers them to another REST API or webhook, either on a schedule or when you
